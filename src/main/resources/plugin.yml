@@ -1,0 +1,11 @@
+name: big_molehunt
+version: '1.0'
+main: me.pm7.big_molehunt.Big_molehunt
+api-version: '1.21'
+commands:
+  startmolehunt:
+    usage: /<command>
+  molemsg:
+    usage: /<command> <message>
+  starttimer:
+    usage: /<command>
