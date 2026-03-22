@@ -14,6 +14,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -170,6 +171,14 @@ public final class Big_molehunt extends JavaPlugin implements CommandExecutor, L
                         cancel();
 
                         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                            soundAll(Sound.BLOCK_NOTE_BLOCK_HAT, 0.5f);
+                            Bukkit.broadcast(Component.text("R:" + String.join(", ", red.getEntries()) + "\n").color(NamedTextColor.RED));
+                            Bukkit.broadcast(Component.text("G:" + String.join(", ", red.getEntries()) + "\n").color(NamedTextColor.GREEN));
+                            Bukkit.broadcast(Component.text("B:" + String.join(", ", red.getEntries()) + "\n").color(NamedTextColor.BLUE));
+                            Bukkit.broadcast(Component.text("Y:" + String.join(", ", red.getEntries())).color(NamedTextColor.YELLOW));
+                        }, 100L);
+
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                             for(Player plr : Bukkit.getOnlinePlayers()) plr.sendTitle(ChatColor.YELLOW + "You are...", "", 10, 70, 20);
                             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
 
@@ -280,17 +289,30 @@ public final class Big_molehunt extends JavaPlugin implements CommandExecutor, L
         }
         inv.clear();
 
-        if(e.getDamageSource().getCausingEntity() instanceof Player killer) {
-            if( (red.getEntries().contains(p.getName()) && red.getEntries().contains(killer.getName())) ||
-                    (green.getEntries().contains(p.getName()) && green.getEntries().contains(killer.getName())) ||
-                    (blue.getEntries().contains(p.getName()) && blue.getEntries().contains(killer.getName())) ||
-                    (yellow.getEntries().contains(p.getName()) && yellow.getEntries().contains(killer.getName()))
-            ) {
-                double currentMax = killer.getAttribute(Attribute.MAX_HEALTH).getValue();
-                killer.getAttribute(Attribute.MAX_HEALTH).setBaseValue(currentMax + 4.0d);
-            }
-        }
+//        if(e.getDamageSource().getCausingEntity() instanceof Player killer) {
+//            if( (red.getEntries().contains(p.getName()) && red.getEntries().contains(killer.getName())) ||
+//                    (green.getEntries().contains(p.getName()) && green.getEntries().contains(killer.getName())) ||
+//                    (blue.getEntries().contains(p.getName()) && blue.getEntries().contains(killer.getName())) ||
+//                    (yellow.getEntries().contains(p.getName()) && yellow.getEntries().contains(killer.getName()))
+//            ) {
+//                double currentMax = killer.getAttribute(Attribute.MAX_HEALTH).getValue();
+//                killer.getAttribute(Attribute.MAX_HEALTH).setBaseValue(currentMax + 4.0d);
+//            }
+//        }
 
+    }
+
+    private static final List<Material> LEAVES = Arrays.asList(
+            Material.LEAF_LITTER,
+            Material.PINK_PETALS
+    );
+    @EventHandler
+    public void onPlayerBreakBlock(BlockBreakEvent e) {
+        Player p = e.getPlayer();
+        if(p == null) return;
+        if(LEAVES.contains(e.getBlock().getType())) {
+            if(e.getPlayer().getActiveItem().getType() != Material.SHEARS) e.setDropItems(false);
+        }
     }
 
     private final Random random = new Random();
